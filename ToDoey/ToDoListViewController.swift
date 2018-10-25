@@ -10,7 +10,9 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
-    let itemArray = ["Bread", "Milk", "Cheese", "Eggs"]
+//    let itemArray = ["Bread", "Milk", "Cheese", "Eggs"]  /* As we cannot change the value of a constant, a new array must be declared as a variable.*/
+    
+    var itemArray = ["Bread", "Milk", "Cheese", "Eggs"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,7 +56,36 @@ class ToDoListViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true) /* This allows the selected row to return to its previous visual state instead of remaining grey after a row is tapped */
     }
 
-//    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tableView(_:cellForRowAt:))
+    
+    //MARK: Add New Items
+    
+    @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
+        
+        var textFeild = UITextField()
+        
+        let alert = UIAlertController.init(title: "Add new ToDoey Item", message: "", preferredStyle: .alert)
+        
+        let action = UIAlertAction.init(title: "Add Item", style: .default) { (action) in
+            //what will happen when the user click the Add Item button on our UIAlert
+//            print(textFeild.text) /* The info in this print statement is what we are after, and will need to be appended to the array*/
+            
+            self.itemArray.append(textFeild.text!)
+            
+            self.tableView.reloadData()
+        }
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new item."
+            textFeild = alertTextField
+//            print("Now!") /* This print is for testing only */
+            
+        }
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
+        
+    }
     
     
 }
