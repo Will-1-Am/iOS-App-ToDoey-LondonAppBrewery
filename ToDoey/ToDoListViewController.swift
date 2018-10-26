@@ -14,11 +14,15 @@ class ToDoListViewController: UITableViewController {
     
     var itemArray = ["Bread", "Milk", "Cheese", "Eggs"]
     
+    let defaults = UserDefaults.standard
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     
-    
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items
+        }
     
     }
     
@@ -70,6 +74,8 @@ class ToDoListViewController: UITableViewController {
 //            print(textFeild.text) /* The info in this print statement is what we are after, and will need to be appended to the array*/
             
             self.itemArray.append(textFeild.text!)
+            
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             
             self.tableView.reloadData()
         }
