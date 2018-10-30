@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
 
@@ -16,7 +17,9 @@ class ToDoListViewController: UITableViewController {
   
     var itemArray = [Item]()
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+//    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
+    let context = ( UIApplication.shared.delegate as! AppDelegate ).persistentContainer.viewContext
     
 //    let defaults = UserDefaults.standard /* we will make our own plist instead of using UserDefaults avoiding the                                         singleton*/
     
@@ -24,7 +27,7 @@ class ToDoListViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        print(dataFilePath)
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
 //        let newItem = Item()
 //        newItem.title = "Find Mike"
@@ -89,6 +92,10 @@ class ToDoListViewController: UITableViewController {
         
 //        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark /* When a list item is tapped a checkmark appears at the right of the listing.  The checkmark remains whether we tap the item again or not - we want it to be unticked if tapped again */
         
+/*        context.delete(itemArray[indexPath.row])
+        itemArray.remove(at: indexPath.row) */
+        /* These two lines can be used to delete items, but user experience is not great*/
+        
         itemArray[indexPath.row].done.toggle() /* this is the same as the one line below */
         
 //        itemArray[indexPath.row].done = !itemArray[indexPath.row].done   /* this is the same as the three if block below */
@@ -126,8 +133,10 @@ class ToDoListViewController: UITableViewController {
             //what will happen when the user click the Add Item button on our UIAlert
 //            print(textFeild.text) /* The info in this print statement is what we are after, and will need to be appended to the array*/
             
-            let newItem = Item()
+            let newItem = Item(context: self.context)
+//            let newItem = Item()
             newItem.title = textFeild.text!
+            newItem.done = false
             
 //            self.itemArray.append(textFeild.text!)
             self.itemArray.append(newItem)
@@ -164,27 +173,39 @@ class ToDoListViewController: UITableViewController {
    
     func saveItems() {
         
-        let encoder = PropertyListEncoder()
-        
         do {
-            let data = try encoder.encode( itemArray )
-            try data.write(to: dataFilePath!)
-        } catch {
-            print( "Error encoding item array, \(error.localizedDescription)")
+            try context.save()
+        }catch{
+            print( "Error saving context \( error.localizedDescription )" )
         }
+        
+//        let encoder = PropertyListEncoder()
+//
+//        do {
+//            let data = try encoder.encode( itemArray )
+//            try data.write(to: dataFilePath!)
+//        } catch {
+//            print( "Error encoding item array, \(error.localizedDescription)")
+//        }
         
         self.tableView.reloadData()
         }
     
     func loadItems () {
-        if let data = try? Data( contentsOf: dataFilePath! ) {
+ 
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+        itemArray = try context.fetch(request)
+        }catch{
+            print("Error fetching data from context \( error.localizedDescription )")
+        }
+        /*       if let data = try? Data( contentsOf: dataFilePath! ) {
             let decoder = PropertyListDecoder()
             do{
                 itemArray = try decoder.decode([Item].self, from: data)
             }catch{
                print("Error decoding item array, \(error.localizedDescription)")
-            }
+            }*/
         }
-    }
 }
 
