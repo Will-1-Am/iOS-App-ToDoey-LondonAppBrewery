@@ -191,9 +191,9 @@ class ToDoListViewController: UITableViewController {
         self.tableView.reloadData()
         }
     
-    func loadItems () {
- 
-        let request : NSFetchRequest<Item> = Item.fetchRequest()
+    func loadItems (with request : NSFetchRequest<Item> = Item.fetchRequest() ) {
+ /* Item.fetchRequest() will be the default value unless one is supplied with the call */
+//        let request : NSFetchRequest<Item> = Item.fetchRequest()  /* Line not required as we have the extension containing func searchBarSearchButtonClicked below */
         do {
         itemArray = try context.fetch(request)
         }catch{
@@ -206,6 +206,54 @@ class ToDoListViewController: UITableViewController {
             }catch{
                print("Error decoding item array, \(error.localizedDescription)")
             }*/
+        
+        tableView.reloadData()
+        
         }
+    
 }
 
+//MARK: Search Bar Methods
+extension ToDoListViewController : UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        let request : NSFetchRequest<Item> = Item.fetchRequest()
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+//        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+//        request.predicate = predicate
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+//        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+        
+//        request.sortDescriptors = [sortDescriptor]
+        
+        loadItems( with: request )
+        
+/*        do {
+            itemArray = try context.fetch(request)
+        }catch{
+            print("Error fetching data from context \( error.localizedDescription )")
+        } */
+        
+//        tableView.reloadData()
+        
+        print(searchBar.text!)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+//            tableView.reloadData()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }else{
+            searchBarSearchButtonClicked(searchBar)
+        }
+    }
+    
+    
+}
