@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D319E52218B0FEC00ACBC20 /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D319E51218B0FEC00ACBC20 /* CategoryTableViewController.swift */; };
 		3D9BF7EB21885E8B00B5E22B /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3D9BF7E921885E8B00B5E22B /* DataModel.xcdatamodeld */; };
 		3DD906632180C24500C149B5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD906622180C24500C149B5 /* AppDelegate.swift */; };
 		3DD906652180C24500C149B5 /* ToDoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD906642180C24500C149B5 /* ToDoListViewController.swift */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3D319E51218B0FEC00ACBC20 /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
 		3D9BF7EA21885E8B00B5E22B /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 		3DD9065F2180C24500C149B5 /* ToDoey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3DD906622180C24500C149B5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -48,6 +50,7 @@
 		3D8DCA742186F94500FC0323 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				3D319E51218B0FEC00ACBC20 /* CategoryTableViewController.swift */,
 				3DD906642180C24500C149B5 /* ToDoListViewController.swift */,
 			);
 			path = Controllers;
@@ -173,6 +176,7 @@
 				3DD906652180C24500C149B5 /* ToDoListViewController.swift in Sources */,
 				3D9BF7EB21885E8B00B5E22B /* DataModel.xcdatamodeld in Sources */,
 				3DD906632180C24500C149B5 /* AppDelegate.swift in Sources */,
+				3D319E52218B0FEC00ACBC20 /* CategoryTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
