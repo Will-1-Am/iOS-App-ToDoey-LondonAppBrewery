@@ -51,7 +51,7 @@ class CategoryTableViewController: UITableViewController {
     
         var textFeild = UITextField()
         
-        let alert = UIAlertController(title: "Add new ToDoey category", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add CATEGORY ToDoey ", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
          
@@ -61,8 +61,13 @@ class CategoryTableViewController: UITableViewController {
             self.categoryArray.append(newCategory)
             self.saveCategories()
         }
-        
+        //: Adding a cancel action to the alert
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (cancelAction) in
+            NSLog("Cancel pressed")
+        }
+        //:
         alert.addAction(action)
+        alert.addAction(cancelAction)  //Added this for cancel action
         
         alert.addTextField { (alertTextField) in alertTextField.placeholder = "Add a new category."
             textFeild = alertTextField

@@ -11,7 +11,10 @@ import CoreData
 
 class ToDoListViewController: UITableViewController {
 
-//    let itemArray = ["Bread", "Milk", "Cheese", "Eggs"]  /* As we cannot change the value of a constant, a new array must be declared as a variable.*/
+//    let itemArray = ["Bread", "Milk", "Cheese", "Eggs"]
+/*
+     As we cannot change the value of a constant, a new array must be declared as a variable.
+ */
     
 //    var itemArray = ["Bread", "Milk", "Cheese", "Eggs"]
   
@@ -28,15 +31,21 @@ class ToDoListViewController: UITableViewController {
     
 //    let defaults = UserDefaults.standard /* we will make our own plist instead of using UserDefaults avoiding the                                         singleton*/
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
+        let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first//?.appendingPathComponent("Items.plist")
+        print("*", dataFilePath)
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        
+
 //        let newItem = Item()
 //        newItem.title = "Find Mike"
-////        newItem.done = true  /* used for debugging */
+/*
+     the following statement is used for debugging
+ */
+//        newItem.done = true
+
 //        itemArray.append(newItem)
         
 //        let newItem2 = Item()
@@ -51,12 +60,12 @@ class ToDoListViewController: UITableViewController {
 //        if let items = defaults.array(forKey: "TodoListArray") as? [Item] {
 //            itemArray = items
 //        }
-        
+//        searchBar.delegate = self
 //        loadItems()
     
     }
     
-    //MARK - Tableview Datasource Methods
+//MARK: - Tableview Datasource Methods
     
     //TODO: Declare numberOfRowsInSection here:
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -66,7 +75,6 @@ class ToDoListViewController: UITableViewController {
     //TODO: Declare cellForRowAtIndexPath here:
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        print("cellForRowAtIndexPath called")
-        
 //        let cell = UITableViewCell(style: .default, reuseIdentifier: "ToDoItemCell")
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
@@ -74,44 +82,54 @@ class ToDoListViewController: UITableViewController {
         let item = itemArray[indexPath.row]
         
         cell.textLabel?.text = item.title
-        
-        //Ternary operator ==>
-        //value = condition ? valueIfTrue : valueIfFalse
-        cell.accessoryType = item.done ? .checkmark : .none  /* This line does the same thing as the if block below
-                                                                and reads, "Set the cell's accessory type, depending upon whether item.done is true.  If true, then set the checkmark otherwise set item.done to .none */
-        
-        if item.done == true {
-            cell.accessoryType = .checkmark
-        }else {
-            cell.accessoryType = .none
-        }
-        
-        
+/*
+    Ternary operator ==> value = condition ? valueIfTrue : valueIfFalse
+ */
+        cell.accessoryType = item.done ? .checkmark : .none
+/*
+     The statement above does the same thing as the "if else" block below and reads, "Set the cell's accessory type, depending upon whether item.done is true.  If true, then set the checkmark otherwise set item.done to .none
+ */
+//        if item.done == true {
+//            cell.accessoryType = .checkmark
+//        }else {
+//            cell.accessoryType = .none
+//        }
         return cell
     }
 
-    //TODO: TableView Delegate Methods
+//TODO: - TableView Delegate Methods - This is the Update in CRUD
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 //        print(itemArray[indexPath.row])
         
-//        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark /* When a list item is tapped a checkmark appears at the right of the listing.  The checkmark remains whether we tap the item again or not - we want it to be unticked if tapped again */
+//        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+/*
+         When a list item is tapped a checkmark appears at the right of the listing.  The checkmark remains whether we tap the item again or not - we want it to be unticked if tapped again
+ */
         
-/*        context.delete(itemArray[indexPath.row])
-        itemArray.remove(at: indexPath.row) */
-        /* These two lines can be used to delete items, but user experience is not great*/
-        
+/*
+         context.delete(itemArray[indexPath.row])
+        itemArray.remove(at: indexPath.row)
+         
+         The above two lines can be used to delete items, but user experience is not great.  The order of the statement matters a great deal, because the app will crash if the statements are reversed - as the array will be taken out of bounds.
+ */
+        /// The following statement could be used to update the title to completed instead of putting a tick mark as does the line that is uncommented.
+        //itemArray[indexPath.row].setValue("Completed", forKey: "title")
         itemArray[indexPath.row].done.toggle() /* this is the same as the one line below */
         
-//        itemArray[indexPath.row].done = !itemArray[indexPath.row].done   /* this is the same as the three if block below */
-//
-//        if itemArray[indexPath.row].done == false {
-//            itemArray[indexPath.row].done = true
-//        }else {
-//            itemArray[indexPath.row].done = false
-//        }
-        
-        /* The conditional below takes care of turning the checkmark on or off given the correct tapping */
+//        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+/*
+         The above statement is the same as the three if statements below
+ 
+        if itemArray[indexPath.row].done == false {
+            itemArray[indexPath.row].done = true
+        }else {
+            itemArray[indexPath.row].done = false
+        }
+ */
+/*
+         The conditional below takes care of turning the checkmark on or off given the correct tapping
+ */
 //        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
 //            tableView.cellForRow(at: indexPath)?.accessoryType = .none
 //        }else{
@@ -124,10 +142,8 @@ class ToDoListViewController: UITableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true) /* This allows the selected row to return to its previous visual state instead of remaining grey after a row is tapped */
     }
-
     
-    //MARK: Add New Items
-    
+//MARK: - Add New Items - This is the Create in CRUD
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         
         var textFeild = UITextField()
@@ -135,9 +151,12 @@ class ToDoListViewController: UITableViewController {
         let alert = UIAlertController.init(title: "Add new ToDoey Item", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction.init(title: "Add Item", style: .default) { (action) in
-            //what will happen when the user click the Add Item button on our UIAlert
-//            print(textFeild.text) /* The info in this print statement is what we are after, and will need to be appended to the array*/
-            
+//  what will happen when the user clicks the Add Item button on our UIAlert
+//            print(textFeild.text)
+/*
+    The info in this print statement is what we are after, and will need to be appended to the array
+ */
+//            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
             let newItem = Item(context: self.context)
 //            let newItem = Item()
             newItem.title = textFeild.text!
@@ -159,11 +178,16 @@ class ToDoListViewController: UITableViewController {
 //                print( "Error encoding item array, \(error.localizedDescription)")
 //            }
 //
-////            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+//            self.defaults.set(self.itemArray, forKey: "TodoListArray")
 //
 //            self.tableView.reloadData()
         }
-        
+
+//MARK: - Adding a cancel action to the alert [Add cancel to alert](https://stackoverflow.com/questions/24195310/how-to-add-an-action-to-a-uialertview-button-using-swift-ios)
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (cancelAction) in
+            NSLog("Cancel pressed")
+        }
+
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new item."
             textFeild = alertTextField
@@ -172,11 +196,12 @@ class ToDoListViewController: UITableViewController {
         }
         
         alert.addAction(action)
+        alert.addAction(cancelAction) // Added for cancel facility on the alert
         
         present(alert, animated: true, completion: nil)
         
     }
-   
+//MARK: - For Create, Update and Destroy data in CRUD
     func saveItems() {
         
         do {
@@ -196,11 +221,15 @@ class ToDoListViewController: UITableViewController {
         
         self.tableView.reloadData()
         }
-    
+//MARK: - For Reading database items in CRUD
     func loadItems (with request : NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil ) {
  /* Item.fetchRequest() will be the default value unless one is supplied with the call */
 //        let request : NSFetchRequest<Item> = Item.fetchRequest()  /* Line not required as we have the extension containing func searchBarSearchButtonClicked below */
-        
+//        do {
+//            itemArray = try context.fetch(request)
+//        } catch {
+//            print("Error fetching data from context \(error)")
+//        }
         let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
   
         if let additionalPredicate = predicate {
@@ -233,7 +262,7 @@ class ToDoListViewController: UITableViewController {
     
 }
 
-//MARK: Search Bar Methods
+//MARK: - Search Bar Methods
 extension ToDoListViewController : UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
