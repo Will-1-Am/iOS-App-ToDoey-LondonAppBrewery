@@ -7,14 +7,16 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 
 class CategoryTableViewController: UITableViewController {
-
-    var categoryArray = [Category]()
     
-    let context = ( UIApplication.shared.delegate as! AppDelegate ).persistentContainer.viewContext
+    let realm = try! Realm()
+
+    var categories: Results<Category>? //= [Category]()
+// MARK: - "context" not required for Realm
+//    let context = ( UIApplication.shared.delegate as! AppDelegate ).persistentContainer.viewContext
     /* The above line gives us the ability to CRUD entries in DB */
     
     override func viewDidLoad() {
@@ -28,8 +30,8 @@ class CategoryTableViewController: UITableViewController {
     
     //TODO: Declare numberOfRowsInSection here:
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return categoryArray.count
+        // MARK: - Nil Coalescing Operator - The statement below reads if categories is not nil return categories.count but if it is nil return 1.
+        return categories?.count ?? 1
     }
     
     
@@ -38,9 +40,8 @@ class CategoryTableViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         /* the above line creates a reusable cell and adds it to the table at the indexPath */
-        let category = categoryArray[indexPath.row]
-        
-        cell.textLabel?.text = category.name
+        // MARK: - The statement below reads, "if categories[indexPath.row] is not nil then grab the "name" property. If categories[indexPath.row] is nil then set the text label equal to "No Categories Added Yet".
+        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet"
         
         return cell
     }
@@ -54,12 +55,14 @@ class CategoryTableViewController: UITableViewController {
         let alert = UIAlertController(title: "Add CATEGORY ToDoey ", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
-         
-            let newCategory = Category(context: self.context)
+            //: With CoreData a context is not required to create a new Category
+            let newCategory = Category()  //Category(context: self.context)
+            //: The newCategory has a "name" property since it was defined.
             newCategory.name = textFeild.text!
-            
-            self.categoryArray.append(newCategory)
-            self.saveCategories()
+            // MARK: - Since Results is auto-updating, it is unecessary to append things to it any longer as it will simply auto update.
+//            self.categoryArray.append(newCategory)
+            //: CoreData used ".saveCategories()".  Realm needs the newCategory we just created above.
+            self.save(category: newCategory) //Categories()
         }
         //: Adding a cancel action to the alert
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) { (cancelAction) in
@@ -89,14 +92,20 @@ class CategoryTableViewController: UITableViewController {
         let destinationVC = segue.destination as! ToDoListViewController
         
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categoryArray[indexPath.row]
+            // MARK: -
+            destinationVC.selectedCategory = categories?[indexPath.row]
         }
     }
     
     //MARK: Data manipulation methods
-    func saveCategories () {
+    //: The function is renamed and adjusted to take an argument since Realm is used now.
+    func save(category: Category) {//saveCategories () {
         do {
-            try context.save()
+            //:Here the context is referenced from when CoreData was used. What is required now that realm is employed is:
+            try realm.write {//context.save()
+                realm.add(category)
+                print("*** category added ***")
+            }
         } catch {
             print("Error saving category \( error.localizedDescription )")
         }
@@ -104,14 +113,16 @@ class CategoryTableViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    func loadCategories(with request : NSFetchRequest<Category> = Category.fetchRequest() ) {
+    func loadCategories() {//(with request : NSFetchRequest<Category> = Category.fetchRequest() ) {
+        categories = realm.objects(Category.self)
         
-        do {
-            categoryArray = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context \( error.localizedDescription )")
-        }
-        
+//
+//        do {
+//            categoryArray = try context.fetch(request)
+//        } catch {
+//            print("Error fetching data from context \( error.localizedDescription )")
+//        }
+//
         tableView.reloadData()
     }
 
